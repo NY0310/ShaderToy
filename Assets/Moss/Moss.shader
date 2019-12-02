@@ -28,7 +28,7 @@ Shader "Hidden/Moss"
 			{
 				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
-				float3 nomral : NORMAL;
+				float3 normal : NORMAL;
 			};
 
 			struct v2f
@@ -36,7 +36,7 @@ Shader "Hidden/Moss"
 				float2 uv : TEXCOORD0;
 				float2 uvMoss : TEXCOORD1;
 				float4 vertex : SV_POSITION;
-				float3 nomral : NORMAL;
+				float3 normal : NORMAL;
 			};
 
 			sampler2D _MainTex;float4 _MainTex_ST;
@@ -48,7 +48,7 @@ Shader "Hidden/Moss"
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv,_MainTex);
 				o.uvMoss = TRANSFORM_TEX(v.uv,_MossTex);
-				o.nomral = mul(unity_ObjectToWorld, v.nomral);
+				o.normal = mul(unity_ObjectToWorld, v.normal);
 				return o;
 			}
 			
@@ -59,9 +59,9 @@ Shader "Hidden/Moss"
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed val = dot(normalize(i.normal), _Direction);
-                fixed4 mainCol = tex2D(_MainTex, i.uv_Main);
-                fixed4 mossCol = tex2D(_MossTex, i.uv_Moss);
-                return lerp(mainCol, mossCol, min(_Amount,val,));
+                fixed4 mainCol = tex2D(_MainTex, i.uv);
+                fixed4 mossCol = tex2D(_MossTex, i.uvMoss);
+                return lerp(mainCol, mossCol, min(_Amount,val));
 			}
 			ENDCG
 		}
